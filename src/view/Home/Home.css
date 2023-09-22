@@ -1,0 +1,45 @@
+.container{
+padding:10px;
+margin:0;
+/* background-color:lightblue; */
+min-height: 100vh;
+
+}
+.app-title{
+  text-align: center;  
+  background-color: rgb(223, 159, 172);
+  /* width: fit-content; (jitna content hai utni hi width lega)*/
+  width: 400px;
+  padding: 10px 50px;
+  display: block;
+  margin: 10px auto;
+ border-radius: 20px; 
+}
+.todo-flex{
+    display: flex;
+
+}
+.todo-flex-container{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+.task-input{
+    display: block;
+    width:300px;
+    font-size: 18px;
+    border:1px solid black;
+    border-radius: 5px;
+    padding:10px;
+    margin:10px;
+}
+.btn-add-task{
+    background-color:  rgb(223, 159, 172);
+    border-radius: 30px;
+    padding:15px 30px;
+    border: none;
+    display: block;
+    margin: 20px auto;
+    cursor: pointer;
+
+}
