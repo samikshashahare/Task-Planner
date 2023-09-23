@@ -36,10 +36,16 @@ min-height: 100vh;
 .btn-add-task{
     background-color:  rgb(223, 159, 172);
     border-radius: 30px;
-    padding:15px 30px;
+    padding:10px 30px;
     border: none;
-    display: block;
-    margin: 20px auto;
+    /* display: block; */
+    margin: 20px;
+    width: 150px;
     cursor: pointer;
 
+}
+
+.btn-container{
+    display:flex;
+    justify-content: space-around;
 }
