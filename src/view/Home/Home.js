@@ -1,23 +1,27 @@
-import { useState, useEffect } from 'react'
-import Task from './../../component/Task/Task'
+import { useState, useEffect } from 'react';
+// import showToast from 'crunchy-toast';
+import Task from './../../component/Task/Task';
+import { saveListToLocalStorage } from './../../util/localStorage';
+import showToast from 'crunchy-toast';
+
 import "./Home.css"
 
 
 const Home = () => {
     const [taskList, setTaskList] = useState([
         {
-            id: '1',
+            id: 1,
             title: 'Submit Assignment',
             description: 'it is cumpalsary to finish today',
             priority: 'high'
         }
 
     ])
-    const [id, setId] = useState('0');
+    const [id, setId] = useState(0);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [priority, setpriority] = useState('');
-    const [isEdit, setEdit] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
         const list = JSON.parse(localStorage.getItem('Task-Planner'));
@@ -27,11 +31,50 @@ const Home = () => {
         }
     }, [])
 
-    const saveListToLocalStorage = (tasks) => {
-        localStorage.setItem('Task-Planner', JSON.stringify(tasks))
+
+    const clearInputFields = () => {
+        setTitle('');
+        setDescription('');
+        setpriority('');
+    }
+
+    const findTaskIndexById = (taskId) => {
+        let index;
+
+        taskList.forEach((task, i) => {
+            if (task.id === id) {
+                index = i
+            }
+        })
+        return index;
+    }
+
+    const chequeRequiredFields = () => {
+
+        // if (!title || !description || !priority) {
+        if (!title) {
+            showToast('Title is required!', 'alert', 3000);
+            return false;
+        }
+        if (!description) {
+            showToast('Description is required!', 'alert', 3000);
+            return false;
+        }
+        if (!priority) {
+            showToast('priority is required!', 'alert', 3000);
+            return false;
+        }
+
+        return true;
+
     }
 
     const addTaskToList = () => {
+
+        if (chequeRequiredFields() === false) {
+            return;
+        }
+
         const randomId = Math.floor(Math.random() * 1000);
         const obj = {
             id: randomId,
@@ -43,40 +86,51 @@ const Home = () => {
 
         setTaskList(newTaskList)
 
-        setTitle('');
-        setDescription('');
-        setpriority('');
+        clearInputFields()
+
+        // setTitle('');
+        // setDescription('');
+        // setpriority('');
 
         saveListToLocalStorage(newTaskList);
+        // showToast('This is a sample toast message', 'success', 3000);
+        showToast('Task added successfully', 'success', 3000);
     }
 
     const removeTaskFromList = (id) => {
-        let index;
+        // let index;
 
-        taskList.forEach((task, i) => {
-            if (task.id === id) {
-                index = i
-            }
-        })
+        // taskList.forEach((task, i) => {
+        //     if (task.id === id) {
+        //         index = i
+        //     }
+        // })
+
+        const index = findTaskIndexById(id)
 
         const tempArray = taskList;
-        tempArray.splice(index, 1);
+        tempArray.splice(index,1);
 
         setTaskList([...tempArray])
 
         saveListToLocalStorage(tempArray)
 
+        showToast('Task deleted successfully', 'alert', 3000);
     }
 
     const setTaskEditable = (id) => {
-        setEdit(true);
+        setIsEdit(true);
         setId(id);
-        let currentEditTask;
-        taskList.forEach((task) => {
-            if (task.id === id) {
-                currentEditTask = task;
-            }
-        })
+
+        // let currentEditTask;
+        // taskList.forEach((task) => {
+        //     if (task.id === id) {
+        //         currentEditTask = task;
+        //     }
+        // })
+        const index = findTaskIndexById(id);
+
+        const currentEditTask = taskList[index];
 
         setTitle(currentEditTask.title);
         setDescription(currentEditTask.description);
@@ -85,17 +139,24 @@ const Home = () => {
     }
 
     const updateTask = () => {
+        // let indexToUpdate;
 
-        let indexToUpdate;
-        taskList.forEach((task, i) => {
-            if(task.id === id){
-                indexToUpdate = i;
-            }
-        })
+        // taskList.forEach((task, i) => {
+        //     if (task.id === id) {
+        //         indexToUpdate = i;
+        //     }
+        // })
+
+        if (chequeRequiredFields() === false) {
+            return;
+        }
+
+        const indexToUpdate = findTaskIndexById(id);
+
         const tempArray = taskList;
-        tempArray[indexToUpdate] ={
-            
-            id : id,
+        tempArray[indexToUpdate] = {
+
+            id: id,
             title: title,
             description: description,
             priority: priority
@@ -105,11 +166,17 @@ const Home = () => {
 
         saveListToLocalStorage(tempArray)
 
-        setId(0)
-        setTitle('');
-        setDescription('');
-        setpriority('');
-        setEdit(false);
+
+        // setId(0)
+        clearInputFields();
+        // setTitle('');
+        // setDescription('');
+        // setpriority('');
+        setIsEdit(false);
+
+        showToast('Task updated successfully', 'info', 3000);
+
+
     }
 
     return (
@@ -119,19 +186,21 @@ const Home = () => {
 
                 <div>
                     <h2 className="text-center">Task List</h2>
-                    {
-                        taskList.map((taskItem, index) => {
-                            const { id, title, description, priority } = taskItem;
+                    <div className='tasks-container'>
+                        {
+                            taskList.map((taskItem, index) => {
+                                const { id, title, description, priority } = taskItem;
 
-                            return <Task id={id}
-                                title={title}
-                                description={description}
-                                priority={priority}
-                                key={index}
-                                removeTaskFromList={removeTaskFromList}
-                                setTaskEditable={setTaskEditable} />
-                        })
-                    }
+                                return <Task id={id}
+                                    title={title}
+                                    description={description}
+                                    priority={priority}
+                                    key={index}
+                                    removeTaskFromList={removeTaskFromList}
+                                    setTaskEditable={setTaskEditable} />
+                            })
+                        }
+                    </div>
                 </div>
 
                 <div>
@@ -156,7 +225,8 @@ const Home = () => {
                             }}
                                 placeholder='EnterPriority' className="task-input" />
 
-                            <div className='btn-container'>
+
+                            {/* <div className='btn-container'>
                                 {
                                     isEdit ?
                                         <button type="button" className="btn-add-task"
@@ -169,7 +239,17 @@ const Home = () => {
                                             Add
                                         </button>
                                 }
+                            </div> */}
+
+                            <div className='btn-container'>
+                                <button type="button" className="btn-add-task"
+                                    onClick={() => {
+                                        isEdit ? updateTask() : addTaskToList()
+                                    }}>
+                                    {isEdit ? 'update' : 'Add'}
+                                </button>
                             </div>
+
                         </form>
                     </div>
                 </div>

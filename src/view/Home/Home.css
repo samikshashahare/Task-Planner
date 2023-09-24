@@ -49,3 +49,15 @@ min-height: 100vh;
     display:flex;
     justify-content: space-around;
 }
+
+.tasks-container{
+    /* background-color: gray; */
+    height: 435px;
+    overflow-y: scroll;
+}
+
+/* reduce srollbar width */
+.tasks-container::-webkit-scrollbar{
+width: 5px;
+
+}

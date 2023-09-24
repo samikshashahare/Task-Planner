@@ -8,7 +8,8 @@ export const Task = ({ id, title, description, priority, removeTaskFromList,setT
             <p className='task-description'>{description}</p>
             <span className='task-priority'> 🎯{priority}</span>
             <span className='task-delete-icon'
-                onClick={() => { removeTaskFromList(id) }
+                onClick={() => { removeTaskFromList(id);
+                 }
                 }> 🗑 </span>
 
             <span className='task-edit-icon'
